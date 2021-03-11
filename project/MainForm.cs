@@ -6,6 +6,7 @@ namespace cafe
 {
     class MainForm : Form
     {
+        #region объявление элементов управления
         TextBox textBoxName = new TextBox();
         TextBox textBoxSurname = new TextBox();
         TextBox textBoxCheck = new TextBox();
@@ -26,15 +27,23 @@ namespace cafe
         Label labelMsg2 = new Label();
         Label labelMsg3 = new Label();
         TextBox spot = new TextBox();
+        Button saver = new Button();
+        Button desaver = new Button();
+        Collection<Employee> employees = new Collection<Employee>();
+        Collection<Client> clients = new Collection<Client>();
+        private CheckBox checkBox1;
+        Collection<Product> products = new Collection<Product>();
+        #endregion
+
         public MainForm(string title, int height, int width) : base()
         {
             Text = title;
             Height = height;
             Width = width;
             FormBorderStyle = FormBorderStyle.Fixed3D;
-
             this.MaximizeBox = false;
 
+            #region форма добавления клиента
             labelMsg.Text = "Добавить клиента" + Environment.NewLine + "Имя | Фамилия | Счет";
             labelMsg.Location = new Point(10, 10);
             labelMsg.Width = 450;
@@ -75,8 +84,9 @@ namespace cafe
             buttonName.Top = datePicker.Bottom;
             buttonName.MouseClick += buttonClickClient;
             this.Controls.Add(buttonName);
+            #endregion
 
-
+            #region форма добавления сотрудника
             labelMsg2.Text = "Добавить сотрудника" + Environment.NewLine + "Имя | Фамилия | Зарплата";
             labelMsg2.Left = buttonName.Left;
             labelMsg2.Top = buttonName.Bottom + 10;
@@ -134,8 +144,9 @@ namespace cafe
             buttonName2.Top = listBox4.Bottom;
             buttonName2.MouseClick += buttonClickEmployee;
             this.Controls.Add(buttonName2);
+            #endregion
 
-
+            #region форма добавления товара
             labelMsg3.Text = "Добавить товар" + Environment.NewLine + "Название | Id | Цена";
             labelMsg3.Left = buttonName2.Left;
             labelMsg3.Top = buttonName2.Bottom + 10;
@@ -178,23 +189,39 @@ namespace cafe
             buttonName3.Top = listBox5.Bottom;
             buttonName3.MouseClick += buttonClickProduct;
             this.Controls.Add(buttonName3);
-
+            #endregion
 
             spot.Left = buttonName3.Left;
             spot.Top = buttonName3.Bottom + 10;
             spot.Multiline = true;
             spot.ScrollBars = ScrollBars.Vertical;
             spot.Width = 450;
-            spot.Height = 165;
+            spot.Height = 130;
             spot.BorderStyle = BorderStyle.Fixed3D;
             spot.Font = new Font("Times New Roman", 11, FontStyle.Regular);
             this.Controls.Add(spot);
+
+            saver.Text = "Сохранить в файлы";
+            saver.Height = 20;
+            saver.Width = labelMsg3.Width / 2 - 5;
+            saver.Left = labelMsg3.Left;
+            saver.Top = spot.Bottom;
+            saver.MouseClick += buttonClickSave;
+            this.Controls.Add(saver);
+            desaver.Text = "Загрузить из файла";
+            desaver.Height = 20;
+            desaver.Width = labelMsg3.Width / 2;
+            desaver.Left = saver.Right + 10;
+            desaver.Top = spot.Bottom;
+            desaver.MouseClick += buttonClickDesave;
+            this.Controls.Add(desaver);
         }
 
         private void buttonClickClient(object obj, EventArgs ea)
         {
             double check = Convert.ToDouble(textBoxCheck.Text);
             Client clientNew = new Client(textBoxName.Text, textBoxSurname.Text, datePicker.Value, check);
+            clients.Add(clientNew);
             spot.Text = spot.Text + Environment.NewLine + "Новый клиент: " + clientNew.ToString();
         }
         private void buttonClickEmployee(object obj, EventArgs ea)
@@ -203,6 +230,7 @@ namespace cafe
             Education education = (Education)listBox3.SelectedIndex;
             Function function = (Function)listBox4.SelectedIndex;
             Employee employeeNew = new Employee(textBoxName2.Text, textBoxSurname2.Text, datePicker2.Value, salary, education, function);
+            employees.Add(employeeNew);
             spot.Text = spot.Text + Environment.NewLine + "Новый работник: " + employeeNew.ToString();
         }
         private void buttonClickProduct(object obj, EventArgs ea)
@@ -210,8 +238,35 @@ namespace cafe
             double price = Convert.ToDouble(textBoxPrice.Text);
             int id = Convert.ToInt32(textBoxId.Text);
             Clasification clasification = (Clasification)listBox5.SelectedIndex;
-            Product employeeNew = new Product(textBoxName3.Text, id, price, clasification);
-            spot.Text = spot.Text + Environment.NewLine + "Новый товар: " + employeeNew.ToString();
+            Product productNew = new Product(textBoxName3.Text, id, price, clasification);
+            products.Add(productNew);
+            spot.Text = spot.Text + Environment.NewLine + "Новый товар: " + productNew.ToString();
         }
+        private void buttonClickSave(object obj, EventArgs ea)
+        {
+            clients.serializateInFile("clients.dat");
+            employees.serializateInFile("employees.dat");
+            products.serializateInFile("products.dat");
+        }
+        private void buttonClickDesave(object obj, EventArgs ea)
+        {
+            clients.Objects = clients.deserializateFromFile("clients.dat");
+            employees.Objects = employees.deserializateFromFile("employees.dat");
+            products.Objects = products.deserializateFromFile("products.dat");
+
+            foreach (var sourse in clients)
+            {
+                spot.Text = spot.Text + Environment.NewLine + "Клиент:    " + sourse.ToString();
+            }
+            foreach (var sourse in employees)
+            {
+                spot.Text = spot.Text + Environment.NewLine + "Работник: " + sourse.ToString();
+            }
+            foreach (var sourse in products)
+            {
+                spot.Text = spot.Text + Environment.NewLine + "Товар:      " + sourse.ToString();
+            }
+        }
+
     }
 }

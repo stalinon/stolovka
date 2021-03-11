@@ -1,4 +1,4 @@
-﻿
+﻿using System;
 namespace cafe
 {
     public enum Clasification
@@ -10,7 +10,7 @@ namespace cafe
         Напитки,
         Прочее
     }
-
+    [Serializable]
     public class Product
     {
         protected int id;

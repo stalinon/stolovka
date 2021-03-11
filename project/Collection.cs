@@ -61,15 +61,32 @@ namespace cafe
         public List<T> deserializateFromFile(string filename)
         {
             BinaryFormatter formatter = new BinaryFormatter();
-            using (FileStream fs = new FileStream(filename, FileMode.OpenOrCreate))
+            try
             {
-                List<T> newObjects = (List<T>)formatter.Deserialize(fs);
+                using (FileStream fs = new FileStream(filename, FileMode.Open))
+                {
 
-                Console.WriteLine("Объект десериализован");
+                    List<T> newObjects = (List<T>)formatter.Deserialize(fs);
 
-                return newObjects;
+
+                    Console.WriteLine("Объект десериализован");
+
+                    return newObjects;
+                }
             }
+            catch (FileNotFoundException) {
+
+            }
+            catch(System.Runtime.Serialization.SerializationException) {
+
+            }
+            return new List<T>();
+
         }
 
+        public void Add(T value)
+        {
+            objects.Add(value);
+        }
     }
 }

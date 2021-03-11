@@ -18,7 +18,7 @@ namespace cafe
         Менеджер,
         Кассир
     }
-
+    [Serializable]
     public class Employee : Person
     {
         protected Education education;

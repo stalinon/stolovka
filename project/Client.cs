@@ -2,6 +2,7 @@
 
 namespace cafe
 {
+    [Serializable]
     public class Client : Person
     {
         protected double check;

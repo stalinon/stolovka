@@ -2,6 +2,7 @@
 
 namespace cafe
 {
+    [Serializable]
     public class Person
     {
         protected string name;
